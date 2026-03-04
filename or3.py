@@ -1,9 +1,5 @@
-usuario = "admin"
-usuario = "root"
-senha = 1234
-
-usuario = input("Digite seu usuario")
-senha = int(input("DIgite seu usuario"))
+usuario = input("Digite seu usuario: ")
+senha = int(input("DIgite sua senha: "))
 
 if (usuario == "admin" or usuario == "root") and senha == 1234:
     print("acesso liberado")
