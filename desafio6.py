@@ -1,9 +1,9 @@
-saldo_inicial = 1000
+saldo_inicial = 1000.0
 operacao = input("Qual operação você ira realizar? ")
 
 if operacao == "deposito": 
     deposito = float(input("Qual o valor que você quer depositar? R$: "))
-    if deposito > 0:
+    if deposito > 0: 
 
         valor_final = saldo_inicial + deposito
 
