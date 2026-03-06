@@ -8,5 +8,5 @@ elif curso == "s":
      instrutor = input("O instrutor esta presente? s/n ")
      if instrutor == "s":
         print("Acesso liberado")
-    elif instrutor == "n":
+        elif instruto == "n":
         print("Aguarde o instrutor")
