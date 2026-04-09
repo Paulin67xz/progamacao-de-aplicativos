@@ -1,7 +1,6 @@
+idade = int(input("em que ano voce nasceu: "))
 
-idade = int(input("digite a sua idade: "))
-
-if idade >= 18:
+if idade <= 2007:
     print("Você é maior de idade")
 else:
     print("Você é novo ")
