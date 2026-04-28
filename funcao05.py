@@ -12,5 +12,3 @@ def sofrer_dano(valor_dano, vida):
 valor_vida = int(input(" Qual é o valor da sua vida: "))
 valor_dano = int(input("Qual foi o dano: "))
 msg = sofrer_dano(valor_dano, valor_vida)
-        
-        
