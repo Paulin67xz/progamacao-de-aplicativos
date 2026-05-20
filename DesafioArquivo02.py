@@ -35,6 +35,15 @@ def deletar():
      revisar()
     
     id = int(input("Digite o habito que deseja apagar: "))
+    
+    with open ('habitos.txt', 'r') as rotina:
+        linhas = rotina.readlines()
+    
+    del linhas[id]
+
+    with open ('habitos.txt', 'w') as rotina:
+        rotina. writelines(linhas)
+    print("Hábito removido")
 
 
 
