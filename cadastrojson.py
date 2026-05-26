@@ -2,7 +2,7 @@
 import json # serve para salvar os dados em JSON ou converter dados em JSON
 import os # serve para ver se o arquivo esta vazio ou não
 
-BANCO_DADOS = 'alunos.json' # aqui ta falando falando(comparando) que CANCO_DADOS é a mesma coisa que 'alunos.json'
+BANCO_DADOS = 'alunos.json' # 'alunos.json' é o arquivo que vamos ter que utilizar
 
 
 def cadastrar(): # aqui você esta criando a função de cadastrar 
