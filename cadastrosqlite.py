@@ -37,6 +37,23 @@ cursor.execute(comando_inserir)
 
 # 5. SALVAR E FECHAR
 conexao.commit()
-conexao.close()
 
 print(f"Passo 3: Dados de {nome_aluno} gravados com sucesso!")
+
+
+conexao = sqlite3.connect("escola_demonstracao.db")
+cursor = conexao.cursor()
+
+
+cursor.execute("SELECT * FROM Alunos")
+
+
+alunos = cursor.fetchall()
+
+
+print("Lista de alunos cadastrados:")
+for aluno in alunos:
+    print(aluno)
+
+
+conexao.close()
