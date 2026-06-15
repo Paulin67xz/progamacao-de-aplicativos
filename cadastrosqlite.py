@@ -74,7 +74,7 @@ def alterar():
 
     id_aluno = int(input(" Qual seu ID: "))
 
-    cursor.execute(f'''SELECT nome , cpf FROM alunos WHERE id = {id_aluno}''')
+    cursor.execute(f'''SELECT nome , cpf , telefone , idade , turma FROM alunos WHERE id = {id_aluno}''')
     
     aluno = cursor.fetchone()
 
@@ -83,13 +83,19 @@ def alterar():
     else:
         print(f" Nome atual {aluno[0]} ")
         print(f" CPF atual {aluno [1]} ")
+        print(f" Telefone atual {aluno[2]} ")
+        print(f" Idade atual {aluno [3]} ")
+        print(f" Turma atual {aluno [4]} ")
 
         nome_atualizado = input(" Atualize seu nome: ")
         cpf_atualizado = input(" Atualize seu CPF: ")
+        telefone_atualizado = input(" Atualize se telefone: ")
+        idade_atualizada = input(" Atualize sua idade: ")
+        turma_atualizada = input(" Atualize sua turma: ")
 
         cursor.execute(f'''
                         UPDATE alunos
-                        SET nome ='{nome_atualizado}', CPF ='{cpf_atualizado}'
+                        SET nome ='{nome_atualizado}', CPF ='{cpf_atualizado}', Telefone ='{telefone_atualizado}', Idade ='{idade_atualizada}', Turma ='{turma_atualizada}'
                     WHERE id ={id_aluno}
                         ''')
         conexao.commit()
@@ -119,8 +125,8 @@ def deletar():
 
         conexao.close()
 
-listar()
-deletar()
+alterar()
+
     
 
 
