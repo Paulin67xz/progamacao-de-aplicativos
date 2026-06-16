@@ -80,6 +80,8 @@ def alterar():
 
     if not aluno:
         print(" Não encontrado ")
+        conexao.close()
+        return
     else:
         print(f" Nome atual {aluno[0]} ")
         print(f" CPF atual {aluno [1]} ")
@@ -109,23 +111,25 @@ def deletar():
 
     conexao = sqlite3.connect("escola_demonstracao.db")
     cursor = conexao.cursor()
-
+    listar()
     id_aluno = int(input(" Qual ID deseja deletar: " ))
 
     # Verifica se o aluno existe
-    cursor.execute(f'''SELECT id FROM Alunos WHERE Id = {id_aluno}''')
-    aluno = cursor.fetchone()
+    # cursor.execute(f'''SELECT id FROM Alunos WHERE Id = {id_aluno}''')
+    # aluno = cursor.fetchone()
 
-    if not aluno:
-        print ("Aluno não encontrado ")
-    else:
-        cursor.execute(f'''DELETE FROM Alunos WHERE Id = {id_aluno}''')
-        conexao.commit()
-        print("aluno deletado")
+    # if not aluno:
+    #     print ("Aluno não encontrado ")
+    # else:
+    cursor.execute(f'''DELETE FROM Alunos WHERE Id = {id_aluno}''')
+    conexao.commit()
+    print("aluno deletado")
 
-        conexao.close()
+    conexao.close()
 
+listar()
 alterar()
+
 
     
 
