@@ -49,17 +49,17 @@ def listar():
     cursor.execute("SELECT * FROM professor") 
     professor = cursor.fetchall()
 
-    print("=== Lista de Aluno ===")
+    print("=== Lista de Professor ===")
 
     for prof in professor: 
-        print(f"ID: {professor[0]}")
-        print(f"Nome: {professor[1]}")
-        print(f"Telefone: {professor[2]}")
-        print(f"Materia: {professor[3]}")
-        print(f"Idade: {professor[4]}")
-        print(f"CPF: {professor[5]}")
-        print(f"Salario: {professor[6]}")
-        print(f"Escola: {professor[7]}")
+        print(f"ID: {prof[0]}")
+        print(f"Nome: {prof[1]}")
+        print(f"Telefone: {prof[2]}")
+        print(f"Materia: {prof[3]}")
+        print(f"Idade: {prof[4]}")
+        print(f"CPF: {prof[5]}")
+        print(f"Salario: {prof[6]}")
+        print(f"Escola: {prof[7]}")
         print("-" * 30)
 
         conexao.close()
@@ -71,7 +71,7 @@ def atualizar():
 
     id_professor = int(input(" Qual seu ID: "))
 
-    cursor.execute(f'''SELECT nome , cpf , telefone , idade , materia , salario , escola FROM alunos WHERE id = {id_professor}''')
+    cursor.execute(f'''SELECT nome , cpf , telefone , idade , materia , salario , escola FROM professor WHERE id = {id_professor}''')
     
     professor = cursor.fetchone()
 
@@ -93,7 +93,7 @@ def atualizar():
         telefone_atualizado = input(" Atualize se telefone: ")
         idade_atualizada = input(" Atualize sua idade: ")
         materia_atualizada = input(" Atualize sua materia: ")
-        salario_atualizado = int(input(" Atualize o seu salario: "))
+        salario_atualizado = float(input(" Atualize o seu salario: "))
         escola_atualizada = input(" Atualize a sua escola: ")
 
         cursor.execute(f'''
