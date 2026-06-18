@@ -108,7 +108,6 @@ def alterar():
 
 def deletar():
 
-
     conexao = sqlite3.connect("escola_demonstracao.db")
     cursor = conexao.cursor()
     listar()
@@ -125,17 +124,4 @@ def deletar():
     conexao.commit()
     print("aluno deletado")
 
-    conexao.close()
-
-listar()
-alterar()
-
-
-    
-
-
-
-    
-
-
-
+    conexao.close

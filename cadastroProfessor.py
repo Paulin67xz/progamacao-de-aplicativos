@@ -4,7 +4,6 @@ def cadastrar():
     conexao = sqlite3.connect('escola_demonstracao.db')
     cursor = conexao.cursor()
 
-
     
     cursor.execute('''
                     CREATE TABLE IF NOT EXISTS professor (
