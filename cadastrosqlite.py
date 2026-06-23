@@ -35,13 +35,11 @@ def cadastrar():
     # Envia o comando completo para o banco de dados
     cursor.execute(comando_inserir)
 
-    # 5. SALVAR E FECHAR
     conexao.commit()
 
     print("cadastro realizado")
 
     conexao.close()
-
 
 
 def listar():
