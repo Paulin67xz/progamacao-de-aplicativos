@@ -24,5 +24,8 @@ def criar_tabela_turma():
         conexao.commit() 
         conexao.close() 
 
-# o REFERENCES puxa uma referencia de uma tabela de uma tabela esta limpa entao não tem o id
+# o REFERENCES puxa uma referencia de uma tabela q esta limpa entao não tem o id
+
+
+
  
