@@ -86,9 +86,9 @@ def listar_hospitais():
     finally:
         conexao.close
 
-def atualizar_professores():
+def atualizar_hospitais():
     try:
-        conexao = sqlite3.connect('escola_demonstracao.db')
+        conexao = conectar()
         cursor = conexao.cursor()
 
         listar_hospitais()
@@ -105,7 +105,68 @@ def atualizar_professores():
             return
         else:
             
-            nome_hospital = input(" Atualize o hospital: ")
-            cpf_atualizado = input(" Atualize sua cidade: ")
+            atualize_nome_hospital = input(" Atualize o hospital: ")
+            atualize_cidade = input(" Atualize sua cidade: ")
 
+            cursor.execute(f'''
+                            UPDATE hospitais
+                            SET nome ='{atualize_nome_hospital}', cidade ='{atualize_cidade}',
+                            WHERE id = {id_hospital}
+                        ''')
             
+            conexao.commit()
+            print(" Dados alterados ")
+
+    except sqlite3.Error as erro:
+        print("Erro ao atualizar hospitais:", erro)
+    finally:
+        conexao.close
+
+
+def deletar_hospital():
+    try:
+        conexao = conectar()
+        cursor = conexao.cursor()
+
+        listar_hospitais
+
+        id_hospital = input("Qual hospital deseja deletar: ")
+
+        cursor.execute(f'''DELETE FROM hospitais WHERE Id = {id_hospital}''')
+
+        conexao.commit()
+        print("professor deletado")
+
+    except sqlite3.Error as erro:
+        print("Erro ao deletar hospitais:", erro)
+    finally:
+        conexao.close
+
+
+def menu():
+    try:
+      
+        while True:
+            print("\n--- TABELA HOSPITAIS ---")
+            print("\n=== SISTEMA HOSPITAL ===")  
+            print("1. Cadastrar hospital") 
+            print("2. Listar hospitais") 
+            print("3. Atualizar hospital") 
+            print("4. Excluir hospital") 
+            print("5. Sair")
+                
+            opcao = input("Escolha uma opção: ")
+
+            if opcao == '1': cadastrar_hospital()
+            elif opcao == '2': listar_hospitais() 
+            elif opcao == '3': atualizar_hospitais() 
+            elif opcao == '4': deletar_hospital() 
+            elif opcao == '5': break
+            else: print("Opção inválida!")
+
+    except sqlite3.Error as erro:
+        print("Erro ao deletar hospitais:", erro)
+
+    menu()
+
+
