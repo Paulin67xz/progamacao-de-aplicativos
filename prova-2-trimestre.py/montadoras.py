@@ -1,28 +1,59 @@
 import sqlite3
 
+def criar_tabelas():
+    conexao = None
+    try:
+        conexao = sqlite3.connect("veiculos.db")
+        cursor = conexao.cursor()
+        cursor.execute("PRAGMA foreign_keys = ON")
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS montadoras (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                marca TEXT,
+                pais_origem TEXT NOT NULL
+            )
+        """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS concessionarias (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                cidade TEXT NOT NULL,
+                id_montadora INTEGER NOT NULL,
+                FOREIGN KEY (id_montadora)
+                    REFERENCES montadoras(id)
+                )
+        
+                       """)
+
+        conexao.commit()
+        
+
+    except sqlite3.Error as erro:
+        print(f"Erro no banco de dados: {erro}")
+    except Exception as erro:
+        print(f"Erro inesperado: {erro}")
+    finally:
+        if conexao:
+            conexao.close()
+
+
+
+
 def cadastrar_montadoras():
+    conexao = None
     try:
         conexao = sqlite3.connect('veiculos.db')
         cursor = conexao.cursor()
-
-        cursor.execute ('''
-                        CREATE TABLE IF NOT EXISTS montadoras (
-                    id  INTEGER PRIMARY KEY AUTOINCREMENT,
-                    marca TEXT,
-                    pais_origem TEXT
-                    )
-                    ''')
-        
+    
 
         marca = input("Digite a marca da montadora: ")
         pais_origem = input("Digite o país de origem: ")
 
-        comando_inserir = f'''
-        INSERT INTO montadoras (marca, pais_origem)
-        values ('{marca}', '{pais_origem}')
-        '''
-
-        cursor.execute(comando_inserir)
+        cursor.execute('''
+                        INSERT INTO montadoras (marca, pais_origem)
+                        VALUES (?, ?)
+                        ''', (marca, pais_origem))
 
         conexao.commit()
 
@@ -43,9 +74,11 @@ def cadastrar_montadoras():
     except Exception as e:
         print(f"Erro inesperado: {e}")
     finally:
-        conexao.close()
+         if conexao:
+             conexao.close()
 
 def listar_montadoras():
+    conexao = None
     try:
 
         conexao = sqlite3.connect('veiculos.db')
@@ -77,9 +110,11 @@ def listar_montadoras():
     except Exception as e:
         print(f"Erro inesperado: {e}")
     finally:
-        conexao.close()
+        if conexao:
+            conexao.close()
 
 def atualizar_montadoras():
+    conexao = None
     try:
 
         conexao = sqlite3.connect('veiculos.db')
@@ -95,7 +130,6 @@ def atualizar_montadoras():
 
         if not montadora:
             print("Montadora não encontrada")
-            conexao.close()
             return
         else:
             marca_atualizada = input(" Atualize a marca: ")
@@ -125,9 +159,11 @@ def atualizar_montadoras():
     except Exception as e:
         print(f"Erro inesperado: {e}")
     finally:
-        conexao.close()
+        if conexao:
+            conexao.close()
 
 def deletar_montadora():
+    conexao = None
     try:
 
         conexao = sqlite3.connect('veiculos.db')
@@ -142,6 +178,9 @@ def deletar_montadora():
         conexao.commit()
         print(" Montadora deletada")
 
+    except sqlite3.IntegrityError:
+        print("Não é possível deletar a montadora.")
+        print("Existe uma concessionária relacionada a ela.")
     except ValueError:
         print("Valor inválido.")
     except TypeError:
@@ -157,50 +196,41 @@ def deletar_montadora():
     except Exception as e:
         print(f"Erro inesperado: {e}")
     finally:
-        conexao.close()
+        if conexao:
+            conexao.close()
 
 
 
 def cadartrar_concessionarias():
+     conexao = None
      try:
 
-            conexao = sqlite3.connect('veiculos.db')
-            cursor = conexao.cursor()
+        conexao = sqlite3.connect('veiculos.db')
+        cursor = conexao.cursor()
 
-            cursor.execute ('''
-                            CREATE TABLE IF NOT EXISTS concessionarias (
-                        id  INTEGER PRIMARY KEY AUTOINCREMENT,
-                        cidade TEXT,
-                        id_montadora INTEGER
-                        )
-                        ''')
+        listar_montadoras()
+      
+
+        cidade_concessionaria = input("Digite a cidade da sua concessionaria: ")
+        id_montadora = int(input("Digite o ID da montadora: "))
+
+        cursor.execute(f'''SELECT id FROM montadoras WHERE id = {id_montadora} ''')
+
+        montadora = cursor.fetchone()
+
+        if not montadora:
+            print("Montadora não encontrada")
+            return
             
-            cidade_concessionaria = input("Digite a cidade da sua concessionaria: ")
-            id_montadora = int(input("Digite o ID da montadora: "))
-
-
-
-            cursor.execute(f'''SELECT id FROM montadoras WHERE id = {id_montadora} ''')
-
-            montadora = cursor.fetchone()
-
-            if not montadora:
-                print("Montadora não encontrada")
-                conexao.close()
-                return
-            
-            comando_inserir = f'''
-            INSERT INTO concessionarias (cidade, id_montadora)
-            values ('{cidade_concessionaria}', '{id_montadora}')
-            '''
-
-            cursor.execute(comando_inserir)
+        cursor.execute('''
+                        INSERT INTO concessionarias (cidade, id_montadora)
+                        VALUES (?, ?)
+                        ''', (cidade_concessionaria, id_montadora))
 
            
-            conexao.commit()
-            print("Cadastro realizado!")
+        conexao.commit()
+        print("Cadastro realizado!")
 
-                
 
      except ValueError:
         print("Valor inválido.")
@@ -217,16 +247,26 @@ def cadartrar_concessionarias():
      except Exception as e:
         print(f"Erro inesperado: {e}")
      finally:
-        conexao.close()
+         if conexao:
+            conexao.close()
 
 
 def listar_concessionaria():
+    conexao = None
     try:
 
         conexao = sqlite3.connect('veiculos.db')
         cursor = conexao.cursor()
 
-        cursor.execute("SELECT * FROM concessionarias") 
+        cursor.execute("""
+            SELECT concessionarias.id,
+                   concessionarias.cidade,
+                   montadoras.marca
+            FROM concessionarias
+            INNER JOIN montadoras
+            ON concessionarias.id_montadora = montadoras.id
+        """)
+
         listar_concessionarias = cursor.fetchall()
 
         print("=== Lista de Concessionarias ===")
@@ -234,7 +274,7 @@ def listar_concessionaria():
         for concessionaria in listar_concessionarias:
             print(f"ID: {concessionaria[0]}")
             print(f"Cidade: {concessionaria[1]}")
-            print(f"id montadora: {concessionaria[2]}")
+            print(f"Montadora: {concessionaria[2]}")
             print("-" * 30)
 
 
@@ -253,9 +293,12 @@ def listar_concessionaria():
     except Exception as e:
         print(f"Erro inesperado: {e}")
     finally:
-        conexao.close()
+        if conexao:
+            conexao.close()
+
 
 def atualizar_concessionaria():
+    conexao = None
     try:
 
         conexao = sqlite3.connect('veiculos.db')
@@ -271,36 +314,34 @@ def atualizar_concessionaria():
 
         if not concessionaria:
             print("concessionaria não encontrada")
-            conexao.close()
             return
-        else:
-            cidade_atualizada = input(" Atualize a cidade: ")
-            id_montadora_atualizado = int(input(" Atualize o id da montadora: "))
+        
+
+        cidade_atualizada = input(" Atualize a cidade: ")
+        id_montadora_atualizado = int(input(" Atualize o id da montadora: "))
 
             
-            cursor.execute(f'''
+            
+        cursor.execute(f'''SELECT id FROM montadoras WHERE id = {id_montadora_atualizado} ''')
+
+        montadora = cursor.fetchone()
+
+        if not montadora:
+            print("Montadora não encontrada")
+            print("Digite o ID de uma montadora existente.")
+            return
+
+        cursor.execute(f'''
                            UPDATE concessionarias
                             SET cidade = '{cidade_atualizada}',
                             id_montadora = {id_montadora_atualizado}
                             WHERE id = {id_concessionaria}
                             ''')
+        
+
+        conexao.commit()
+        print("Dados alterados!")
             
-            
-            cursor.execute(f'''SELECT id FROM montadoras WHERE id = {id_montadora} ''')
-
-            montadora = cursor.fetchone()
-
-            if not montadora:
-                print("Montadora não encontrada")
-                conexao.close()
-                return
-
-
-
-
-            
-            conexao.commit()
-            print(" Dados alterados ")
 
     except ValueError:
         print("Valor inválido.")
@@ -317,9 +358,11 @@ def atualizar_concessionaria():
     except Exception as e:
         print(f"Erro inesperado: {e}")
     finally:
-        conexao.close()
+        if conexao:
+            conexao.close()
 
 def deletar_concessionaria():
+    conexao = None
     try:
 
         conexao = sqlite3.connect('veiculos.db')
@@ -350,7 +393,8 @@ def deletar_concessionaria():
     except Exception as e:
         print(f"Erro inesperado: {e}")
     finally:
-        conexao.close()
+        if conexao:
+            conexao.close()
 
 
 
@@ -405,6 +449,7 @@ def menu_montadoras_e_concessionarias():
         print(f"Erro inesperado: {e}")
 
 
+criar_tabelas()
 menu_montadoras_e_concessionarias()
 
 

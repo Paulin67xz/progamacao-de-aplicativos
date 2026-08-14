@@ -1,10 +1,10 @@
 import sqlite3
 
-conexao = sqlite3.connect('escola_demonstracao.db')
+conexao = sqlite3.connect('veiculos.db')
 cursor = conexao.cursor()
 
 cursor.execute('''
-     DROP TABLE alunos
+     DROP TABLE montadoras
 ''')
 
 conexao.commit()
