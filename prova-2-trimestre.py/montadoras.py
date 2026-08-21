@@ -40,25 +40,22 @@ def criar_tabelas():
  
  
  
-def cadastrar_montadoras(): 
+def cadastrar_montadoras(marca, pais_origem): 
     conexao = None 
     try: 
         conexao = sqlite3.connect('veiculos.db') 
         cursor = conexao.cursor() 
      
- 
-        marca = input("Digite a marca da montadora: ") 
-        pais_origem = input("Digite o país de origem: ") 
- 
+
         cursor.execute(''' 
                         INSERT INTO montadoras (marca, pais_origem) 
                         VALUES (?, ?) 
                         ''', (marca, pais_origem)) 
  
         conexao.commit() 
- 
-        print("cadastro realizado") 
- 
+        return "cadastro realizado"
+
+
     except sqlite3.Error as erro:
         print(f"Erro no banco de dados: {erro}")
     except ValueError: 
@@ -87,7 +84,9 @@ def listar_montadoras():
             print(f"ID: {montadora[0]}") 
             print(f"Marca: {montadora[1]}") 
             print(f"país de origem: {montadora[2]}") 
-            print("-" * 30) 
+            print("-" * 30)
+        conexao.commit()
+        return "listado com sucesso"
  
     except sqlite3.Error as erro:
         print(f"Erro no banco de dados: {erro}")
@@ -99,7 +98,7 @@ def listar_montadoras():
         if conexao: 
             conexao.close() 
  
-def atualizar_montadoras(): 
+def atualizar_montadoras(id_montadora, marca_atualizada, pais_origem_atualizada): 
     conexao = None 
     try: 
  
@@ -107,8 +106,6 @@ def atualizar_montadoras():
         cursor = conexao.cursor() 
  
         listar_montadoras() 
- 
-        id_montadora = int(input("Qual id deseja atualizar: ")) 
  
         cursor.execute(f'''SELECT marca , pais_origem FROM montadoras WHERE id = {id_montadora} ''') 
  
@@ -118,9 +115,6 @@ def atualizar_montadoras():
             print("Montadora não encontrada") 
             return 
         else: 
-            marca_atualizada = input(" Atualize a marca: ") 
-            pais_origem_atualizada = input(" Atualize o país de origem: ") 
-             
             cursor.execute(f''' 
                            UPDATE montadoras  
                            SET marca = '{marca_atualizada}', pais_origem = '{pais_origem_atualizada}' 
@@ -128,7 +122,7 @@ def atualizar_montadoras():
                            ''') 
              
             conexao.commit() 
-            print(" Dados alterados ") 
+            return " Dados alterados "
  
     except sqlite3.Error as erro:
         print(f"Erro no banco de dados: {erro}")
@@ -142,7 +136,7 @@ def atualizar_montadoras():
         if conexao: 
             conexao.close() 
  
-def deletar_montadora(): 
+def deletar_montadora(id_montadora): 
     conexao = None 
     try: 
  
@@ -150,13 +144,18 @@ def deletar_montadora():
         cursor = conexao.cursor() 
  
         listar_montadoras() 
- 
-        id_montadora = int(input("Qual id deseja deletar: ")) 
- 
-        cursor.execute(f''' DELETE FROM montadoras WHERE id = {id_montadora}''') 
- 
-        conexao.commit() 
-        print(" Montadora deletada") 
+
+        cursor.execute("SELECT * FROM montadoras")  
+        
+        deletar_montadora = cursor.fetchall() 
+        
+        if not deletar_montadora:
+            return "nao existe o id"
+        else:
+            cursor.execute(f''' DELETE FROM montadoras WHERE id = {id_montadora}''') 
+
+            conexao.commit() 
+            return "Montadora deletada"
  
     except sqlite3.IntegrityError: 
         print("Não é possível deletar a montadora.") 
@@ -175,7 +174,7 @@ def deletar_montadora():
  
  
  
-def cadartrar_concessionarias(): 
+def cadartrar_concessionarias(cidade_concessionaria,  id_montadora): 
      conexao = None 
      try: 
  
@@ -184,17 +183,13 @@ def cadartrar_concessionarias():
  
         listar_montadoras() 
        
- 
-        cidade_concessionaria = input("Digite a cidade da sua concessionaria: ") 
-        id_montadora = int(input("Digite o ID da montadora: ")) 
- 
+
         cursor.execute(f'''SELECT id FROM montadoras WHERE id = {id_montadora} ''') 
  
         montadora = cursor.fetchone() 
  
         if not montadora: 
-            print("Montadora não encontrada") 
-            return 
+            return "Montadora não encontrada"
              
         cursor.execute(''' 
                         INSERT INTO concessionarias (cidade, id_montadora) 
@@ -203,7 +198,7 @@ def cadartrar_concessionarias():
  
             
         conexao.commit() 
-        print("Cadastro realizado!") 
+        return "Cadastro realizado!"
  
  
      except sqlite3.Error as erro:
@@ -369,12 +364,30 @@ def menu_montadoras_e_concessionarias():
  
             opcao = input("Escolha uma opção: ") 
  
-            if opcao == '1': cadastrar_montadoras() 
-            elif opcao == '2': listar_montadoras()  
-            elif opcao == '3': atualizar_montadoras()  
-            elif opcao == '4': deletar_montadora()  
+            if opcao == '1': 
+                marca = input("Digite a marca da montadora: ") 
+                pais_origem = input("Digite o país de origem: ") 
+                cadastrar_montadoras(marca,pais_origem) 
+
+            elif opcao == '2': 
+               
+                listar_montadoras()  
+
+            elif opcao == '3': 
+                id_montadora = int(input("Qual id deseja atualizar: "))
+                marca_atualizada = input(" Atualize a marca: ")
+                pais_origem_atualizada = input(" Atualize o país de origem: ") 
+                atualizar_montadoras(id_montadora, marca_atualizada, pais_origem_atualizada) 
+
+            elif opcao == '4': 
+                id_montadora = int(input("Qual id deseja deletar: "))
+                deletar_montadora(id_montadora)  
  
-            elif opcao == '5': cadartrar_concessionarias() 
+            elif opcao == '5': 
+                cidade_concessionaria = input("Digite a cidade da sua concessionaria: ") 
+                id_montadora = int(input("Digite o ID da montadora: ")) 
+                cadartrar_concessionarias(cidade_concessionaria, id_montadora) 
+
             elif opcao == '6': listar_concessionaria() 
             elif opcao == '7': atualizar_concessionaria()  
             elif opcao == '8': deletar_concessionaria()  
@@ -391,6 +404,17 @@ def menu_montadoras_e_concessionarias():
  
 criar_tabelas() 
 menu_montadoras_e_concessionarias()
+
+assert cadastrar_montadoras ("cm", "cm.ww") == "cadastro realizado"
+assert listar_montadoras == "listado com sucesso"
+assert atualizar_montadoras (4, "ls", "ls.ww") == " Dados alterados "
+assert deletar_montadora(6) == "Montadora deletada"
+assert deletar_montadora(2) == "nao existe o id"
+assert cadartrar_concessionarias ("cc", "cc.ww") == "Cadastro realizado!"
+assert cadartrar_concessionarias ("ac", "ac.ww") == "Montadora não encontrada"
+
+
+
 
 
 
