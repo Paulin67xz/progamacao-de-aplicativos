@@ -239,6 +239,9 @@ def listar_concessionaria():
             print(f"Cidade: {concessionaria[1]}") 
             print(f"Montadora: {concessionaria[2]}") 
             print("-" * 30) 
+        
+        conexao.commit
+        return "listado com sucesso"
  
  
     except sqlite3.Error as erro:
@@ -252,7 +255,7 @@ def listar_concessionaria():
             conexao.close() 
  
  
-def atualizar_concessionaria(): 
+def atualizar_concessionaria(id_concessionaria, cidade_atualizada, id_montadora_atualizado): 
     conexao = None 
     try: 
  
@@ -270,13 +273,8 @@ def atualizar_concessionaria():
         if not concessionaria: 
             print("concessionaria não encontrada") 
             return 
-         
  
-        cidade_atualizada = input(" Atualize a cidade: ") 
-        id_montadora_atualizado = int(input(" Atualize o id da montadora: ")) 
- 
-             
-             
+
         cursor.execute(f'''SELECT id FROM montadoras WHERE id = {id_montadora_atualizado} ''') 
  
         montadora = cursor.fetchone() 
@@ -295,7 +293,7 @@ def atualizar_concessionaria():
          
  
         conexao.commit() 
-        print("Dados alterados!") 
+        return "Dados alterados!" 
              
  
     except sqlite3.Error as erro:
@@ -310,7 +308,7 @@ def atualizar_concessionaria():
         if conexao: 
             conexao.close() 
  
-def deletar_concessionaria(): 
+def deletar_concessionaria(id_concessionaria): 
     conexao = None 
     try: 
  
@@ -319,12 +317,11 @@ def deletar_concessionaria():
  
         listar_concessionaria() 
  
-        id_concessionaria = int(input("Qual id deseja deletar: ")) 
  
         cursor.execute(f''' DELETE FROM concessionarias WHERE id = {id_concessionaria}''') 
  
         conexao.commit() 
-        print(" Concessionaria deletada") 
+        return "Concessionaria deletada" 
  
  
     except sqlite3.Error as erro:
@@ -388,9 +385,21 @@ def menu_montadoras_e_concessionarias():
                 id_montadora = int(input("Digite o ID da montadora: ")) 
                 cadartrar_concessionarias(cidade_concessionaria, id_montadora) 
 
-            elif opcao == '6': listar_concessionaria() 
-            elif opcao == '7': atualizar_concessionaria()  
-            elif opcao == '8': deletar_concessionaria()  
+            elif opcao == '6': 
+                
+                listar_concessionaria()
+
+            elif opcao == '7': 
+                id_concessionaria = int(input("Qual id deseja atualizar: "))
+                cidade_atualizada = input(" Atualize a cidade: ") 
+                id_montadora_atualizado = int(input(" Atualize o id da montadora: ")) 
+                atualizar_concessionaria(id_concessionaria, cidade_atualizada, id_montadora_atualizado)
+
+            elif opcao == '8': 
+                id_concessionaria = int(input("Qual id deseja deletar: ")) 
+                deletar_concessionaria(id_concessionaria)  
+
+
             elif opcao == '9': break 
             else: print("Opção inválida!") 
  
@@ -412,8 +421,9 @@ assert deletar_montadora(6) == "Montadora deletada"
 assert deletar_montadora(2) == "nao existe o id"
 assert cadartrar_concessionarias ("cc", "cc.ww") == "Cadastro realizado!"
 assert cadartrar_concessionarias ("ac", "ac.ww") == "Montadora não encontrada"
-
-
+assert listar_concessionaria == "listado com sucesso"
+assert atualizar_concessionaria (4, "at", "at.ww") == "Dados alterados!"
+assert deletar_concessionaria(2) == "Concessionaria deletada" 
 
 
 
